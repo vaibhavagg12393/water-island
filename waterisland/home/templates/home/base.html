@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+{% load i18n %}
+<html>
+  <head>
+    <title>{% trans 'Water Island Capital' %}</title>
+    <meta charset='utf-8'/>
+    {% load staticfiles %}
+    <link rel='stylesheet' href='{% static 'css/base.css' %}' type='text/css'/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    {% block head %}
+    {% endblock %}
+  </head>
+  <body class="body-style">
+    {% include "home/navbar.html" %}
+    {% block content %}
+    {% endblock %}
+  </body>
+</html>

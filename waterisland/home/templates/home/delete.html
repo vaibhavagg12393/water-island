@@ -1,0 +1,15 @@
+{% extends 'home/base.html' %}
+{% load i18n %}
+
+{% block content %}
+  <div class="div-padding">
+    <h1>Delete Data</h1>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <p>{% trans 'Are you sure you want to delete the data?' %}</p>
+      <button type="submit">{% trans 'Yes, Delete' %}</button>
+      <button><a href="/">{% trans 'No, Return to Home' %}</a></button>
+    </form>
+  </div>
+{% endblock %}
