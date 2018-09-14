@@ -25,7 +25,7 @@ SECRET_KEY = '_cuvlpe+=1esuqg#f=+1ogqfh*9ih-=dh&s4ee(lqq-!j**m6w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['vaibhavagg12393.pythonanywhere.com']
 
 
 # Application definition
