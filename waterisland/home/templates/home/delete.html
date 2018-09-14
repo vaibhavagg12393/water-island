@@ -8,6 +8,9 @@
       {% csrf_token %}
       {{ form.as_p }}
       <p>{% trans 'Are you sure you want to delete the data?' %}</p>
+      <div class="alert alert-danger" role="alert">
+        <p>{% trans 'WARNING: Selecting Yes will delete all the data for all Transactions and Balance files.' %}</p>
+      </div>
       <button type="submit">{% trans 'Yes, Delete' %}</button>
       <button><a href="/">{% trans 'No, Return to Home' %}</a></button>
     </form>

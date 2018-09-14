@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 
 from home.forms import DeleteDataHistoryForm, DocumentForm
 from home.models import Balance, ClientData, Document, Transactions
-from utils import  get_matched_rows, populate_table
+from utils import  get_matched_balances, get_matched_transactions, populate_table
 
 
 def index(request):
@@ -30,14 +30,22 @@ def report(request, report_id):
             for institution in unique_institutions:
                 required_fund = Transactions.objects.filter(fund=fund, account=institution)
                 required_institution = ClientData.objects.filter(fund=fund, institution=institution)
-                rows = get_matched_rows(required_fund, required_institution)
+                rows = get_matched_transactions(required_fund, required_institution)
                 result[institution] = rows
-
-        return render(request, 'home/report.html', result)
     elif report_id == 2:
-        return render(request, 'home/report.html', result)
+        for fund in unique_funds:
+            for institution in unique_institutions:
+                required_fund = Transactions.objects.filter(fund=fund, account=institution)
+                required_institution = ClientData.objects.filter(fund=fund, institution=institution)
+                rows = get_matched_transactions(required_fund, required_institution)
+                result[institution] = rows
     elif report_id == 3:
-        return render(request, 'home/report.html', result)
+        for fund in unique_funds:
+            for institution in unique_institutions:
+                required_fund = Balance.objects.filter(fund=fund, institution=institution)
+                required_institution = ClientData.objects.filter(fund=fund, institution=institution)
+                rows = get_matched_balances(required_fund, required_institution)
+                result[institution] = rows
     return render(request, 'home/report.html', result)
 
 

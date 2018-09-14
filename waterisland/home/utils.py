@@ -5,9 +5,11 @@ from pyexcel_xls import get_data
 from home.models import Balance, ClientData, Transactions
 
 TRADAR = 'Tradar'
+LG = 'LG'
 GS = 'GS'
 SS = SSB = 'SS'
-FUND = {'LITMAN GREGORY': 'LG', 'Y76E': 'LG'}
+FUND = {'LITMAN GREGORY': 'LG', 'Y76E': 'LG', 'LG': 'LG'}
+INSTITUTION = {'SS': 'SS', 'SSB': 'SS', 'GS': 'GS'}
 TRANSACTION_FILE = u'T'
 BALANCE_FILE = u'B'
 
@@ -39,23 +41,29 @@ def populate_table(request, file_path, file_type):
                         cash_flow=cash_flow
                     )
         elif file_type == BALANCE_FILE:
+            fund = LG
+            institution = GS
             for key in data.keys():
                 data = data[key]
                 for value in data[1:]:
-                    trade, type, amount, security_type, ticker, isin, cusip, description, price, date, settles, cash_flow = value[:16]
-                    Balance.objects.create(
-                        trade=trade,
-                        type=type,
-                        amount=amount,
-                        security_type=security_type,
-                        ticker=ticker,
-                        isin=isin,
-                        description=description,
-                        price=price,
-                        date=date,
-                        settles=settles,
-                        cash_flow=cash_flow
-                    )
+                    if len(value) == 1:
+                        fund = FUND.get(value[0])
+                    elif len(value) == 2:
+                        fund = fund
+                        institution = INSTITUTION.get(value[1])
+                    elif len(value) == 14:
+                        fund = fund
+                        institution = institution
+                        ccy = value[2]
+                    elif len(value) == 15:
+                        type, balance = value[4], value[14]
+                        Balance.objects.create(
+                            fund=fund,
+                            institution=institution,
+                            ccy=ccy,
+                            type=type,
+                            balance=balance
+                        )
     else:
         for key in data.keys():
             data = data[key]
@@ -98,14 +106,36 @@ def populate_table(request, file_path, file_type):
                                 amount=amount, settle_date=settle_date, details=details, currency=currency)
 
 
-def get_matched_rows(required_funds, required_institutions):
+def get_matched_transactions(required_funds, required_institutions):
     result = []
     if not required_funds or not required_institutions:
         return result
     for institution in required_institutions:
         for fund in required_funds:
             if institution.settle_date == fund.settles and institution.amount == fund.cash_flow:
+                institution.match = True
+                institution.save()
                 result.append(institution)
+    
+    return result
+
+
+def get_matched_balances(required_funds, required_institutions):
+    result = []
+    if not required_funds or not required_institutions:
+        return result
+    for institution in required_institutions:
+        match_found = False
+        for fund in required_funds:
+            if institution.currency == fund.ccy and institution.amount == fund.balance:
+                institution.match = True
+                institution.save()
+                result.append(institution)
+                match_found = True
+        if not match_found:
+            institution.match = False
+            institution.save()
+            result.append(institution)
     
     return result
 

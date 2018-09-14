@@ -4,10 +4,11 @@
   <div class="div-padding">
   <h1 style="text-align:center">{% trans 'Report' %}</h1>
   {% if report_id == 1 %}
-    {% include "home/report_one.html" %}
+    <h3 style="text-align:center">{% trans 'Match the transaction for each institution by institution' %}</h3>
   {% elif report_id == 2 %}
-    {% include "home/report_two.html" %}
+    <h3 style="text-align:center">{% trans 'Match the transaction for each institution by currency' %}</h3>
   {% elif report_id == 3 %}
-    {% include "home/report_three.html" %}
+    <h3 style="text-align:center">{% trans 'Match the balances' %}</h3>
   {% endif %}
+  {% include "home/report_fragment.html" %}
 {% endblock %}

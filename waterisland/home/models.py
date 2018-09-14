@@ -36,18 +36,11 @@ class Balance(models.Model):
     class Meta:
         db_table = 'tradar_balances'
     
-    trade = models.IntegerField(blank=False)
+    fund = models.CharField(max_length=255)
+    institution = models.CharField(max_length=255)
+    ccy = models.CharField(max_length=255)
     type = models.CharField(max_length=255)
-    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    security_type = models.CharField(max_length=255)
-    ticker = models.CharField(max_length=255)
-    isin = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    date = models.DateField(auto_now_add=True)
-    settles = models.DateField(auto_now_add=True)
-    cash_flow = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    balance = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
 
 class Transactions(models.Model):

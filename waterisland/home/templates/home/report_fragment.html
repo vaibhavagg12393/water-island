@@ -1,5 +1,4 @@
 {% load i18n %}
-<h3 style="text-align:center">{% trans 'Match the transaction for each institution by institution' %}</h3>
   <div class="row">
     <div class="col col-md-3">
       <select id="select_institute" class="form-control">
@@ -11,20 +10,24 @@
   <p></p>
   <div class="table-responsive" id="GS">
     <table class="table">
-        <tr>
-            <th>Institution</th>
-            <th>Fund</th>
-            <th>Currency</th>
-            <th>Settle Date</th>
-            <th>Amount</th>
-          </tr>
+      <tr>
+        <th>Institution</th>
+        <th>Fund</th>
+        <th>Currency</th>
+        <th>Settle Date</th>
+        <th>Amount</th>
+      </tr>
       {% for row in GS %}
-        <tr>
-          <td>{{ row.institution }}</td>
-          <td>{{ row.fund }}</td>
-          <td>{{ row.currency }}</td>
-          <td>{{ row.settle_date }}</td>
-          <td>{{ row.amount }}</td>
+        {% if row.match %}
+          <tr class="bg-success">
+        {% elif not row.match %}
+          <tr class="bg-danger">
+        {% endif %}
+        <td>{{ row.institution }}</td>
+        <td>{{ row.fund }}</td>
+        <td>{{ row.currency }}</td>
+        <td>{{ row.settle_date }}</td>
+        <td>{{ row.amount }}</td>
         </tr>
       {% endfor %}
     </table>
@@ -40,7 +43,11 @@
             <th>Amount</th>
           </tr>
       {% for row in SS %}
-      <tr>
+      {% if row.match %}
+          <tr class="bg-success">
+        {% elif not row.match %}
+          <tr class="bg-danger">
+        {% endif %}
         <td>{{ row.institution }}</td>
         <td>{{ row.fund }}</td>
         <td>{{ row.currency }}</td>
