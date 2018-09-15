@@ -1,0 +1,18 @@
+{% extends 'home/base.html' %}
+{% load i18n %}
+{% block content %}
+<div class="container div-padding">
+  <h1>{% trans 'Features' %}</h1>
+  <div class="list-type1">
+      <ol>
+      <li><p>Upload Transaction files</p></li>
+      <li><p>Upload Balance files</p></li>
+      <li><p>Parse data from uploaded files and save in database</p></li>
+      <li><p>Perform the transaction reconciliation by institution and by currency</p></li>
+      <li><p>Match the balances between the institutions and Tradar</p></li>
+      <li><p>Search, Sort, and Filter  Ability for transactions in the tables</p></li>
+      <li><p>Delete all the data stored in the database</p></li>
+      <li><p>Delete all the uploaded files</p></li>
+      </ol>
+</div>
+{% endblock %}
