@@ -10,6 +10,10 @@ class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
         fields = ('description', 'document', 'file_type')
+    
+    def __init__(self, *args, **kwargs):
+        super(DocumentForm, self).__init__(*args, **kwargs)
+        self.fields['document'].widget.attrs.update({'class' : 'select-file'})
 
 
 class DeleteDataHistoryForm(forms.ModelForm):

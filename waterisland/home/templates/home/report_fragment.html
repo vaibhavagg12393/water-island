@@ -1,76 +1,96 @@
 {% load i18n %}
-  <div class="row">
-    <div class="col col-md-3">
-      <select id="select_institute" class="form-control">
-        <option c-name="GS" value="GS" selected="selected">{% trans 'GS' %}</option>
-        <option c-name="SS" value="SS">{% trans 'SS' %}</option>
-      </select>
-    </div>
+<div class="row">
+  <div class="col col-md-3">
+    <select id="select_institute" class="form-control">
+      <option c-name="GS" value="GS" selected="selected">{% trans 'GS' %}</option>
+      <option c-name="SS" value="SS">{% trans 'SS' %}</option>
+    </select>
   </div>
-  <p></p>
+</div>
+<p></p>
+<div id="GSTable">
   <div class="table-responsive" id="GS">
+    <input class="search" placeholder="Search" />
+    <p></p>
     <table class="table">
-      <tr>
-        <th>Institution</th>
-        <th>Fund</th>
-        <th>Currency</th>
-        <th>Settle Date</th>
-        <th>Amount</th>
-      </tr>
-      {% for row in GS %}
-        {% if row.match %}
-          <tr class="bg-success">
-        {% elif not row.match %}
-          <tr class="bg-danger">
-        {% endif %}
-        <td>{{ row.institution }}</td>
-        <td>{{ row.fund }}</td>
-        <td>{{ row.currency }}</td>
-        <td>{{ row.settle_date }}</td>
-        <td>{{ row.amount }}</td>
-        </tr>
-      {% endfor %}
-    </table>
-  </div>
-
-  <div class="table-responsive" id="SS">
-    <table class="table">
+      <thead>
         <tr>
-            <th>Institution</th>
-            <th>Fund</th>
-            <th>Currency</th>
-            <th>Settle Date</th>
-            <th>Amount</th>
-          </tr>
-      {% for row in SS %}
-      {% if row.match %}
-          <tr class="bg-success">
+          <th class="sort" data-sort="institution">Institution</th>
+          <th class="sort" data-sort="fund">Fund</th>
+          <th class="sort" data-sort="currency">Currency</th>
+          <th class="sort" data-sort="date">Settle Date</th>
+          <th class="sort" data-sort="amount">Amount</th>
+        </tr>
+      </thead>
+      <tbody class="list">
+        {% for row in GS %}
+        {% if row.match %}
+        <tr class="bg-success">
         {% elif not row.match %}
-          <tr class="bg-danger">
+        <tr class="bg-danger">
         {% endif %}
-        <td>{{ row.institution }}</td>
-        <td>{{ row.fund }}</td>
-        <td>{{ row.currency }}</td>
-        <td>{{ row.settle_date }}</td>
-        <td>{{ row.amount }}</td>
-      </tr>
-      {% endfor %}
+          <td class="institution">{{ row.institution }}</td>
+          <td class="fund">{{ row.fund }}</td>
+          <td class="currency">{{ row.currency }}</td>
+          <td class="date">{{ row.settle_date }}</td>
+          <td class="amount">{{ row.amount }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
+</div>
+<div id="SSTable">
+  <div class="table-responsive" id="SS">
+    <input class="search" placeholder="Search" />
+    <p></p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="sort" data-sort="institution">Institution</th>
+          <th class="sort" data-sort="fund">Fund</th>
+          <th class="sort" data-sort="currency">Currency</th>
+          <th class="sort" data-sort="date">Settle Date</th>
+          <th class="sort" data-sort="amount">Amount</th>
+        </tr>
+      </thead>
+      <tbody class="list">
+        {% for row in SS %}
+        {% if row.match %}
+        <tr class="bg-success">
+        {% elif not row.match %}
+        <tr class="bg-danger">
+        {% endif %}
+          <td class="institution">{{ row.institution }}</td>
+          <td class="fund">{{ row.fund }}</td>
+          <td class="currency">{{ row.currency }}</td>
+          <td class="date">{{ row.settle_date }}</td>
+          <td class="amount">{{ row.amount }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-  <script type="text/javascript">
-    $('#SS').css({'display': 'none'});
-    $("#select_institute").change(function() {
-      var selected_option = $('option:selected', this);
-      var cluster_name = selected_option.attr('c-name');
-      if (cluster_name == 'GS') {
-        $('#GS').show();
-        $('#SS').hide();
-      }
-      else if (cluster_name == 'SS') {
-        $('#SS').show();
-        $('#GS').hide();
-      }
-    });
+</div>
+<script type="text/javascript">
+  var options = {
+    valueNames: ['institution', 'fund', 'date', 'amount', 'currency']
+  };
+  var GSList = new List('GSTable', options);
+  var SSList = new List('SSTable', options);
+  
+  $('#SS').css({ 'display': 'none' });
+  $("#select_institute").change(function () {
+    var selected_option = $('option:selected', this);
+    var cluster_name = selected_option.attr('c-name');
+    if (cluster_name == 'GS') {
+      $('#GS').show();
+      $('#SS').hide();
+    }
+    else if (cluster_name == 'SS') {
+      $('#SS').show();
+      $('#GS').hide();
+    }
+  });
 
-  </script>
+</script>
