@@ -8,10 +8,11 @@ from home import views
 
 
 urlpatterns = [
-    url(r'^$',views.index, name='index'),
+    url(r'^$',views.IndexView.as_view(), name='index'),
+    url(r'^features/$', views.FeatureView.as_view(), name='features'),
     url(r'^upload/$', views.model_form_upload, name='model_form_upload'),
     url(r'^delete/$', views.delete, name='delete'),
-    url(r'^analyze/$', views.analyze, name='analyze'),
+    url(r'^analyze/$', views.AnalyzeView.as_view(), name='analyze'),
     url(r'^report/(?P<report_id>\d+)',views.report, name='report'),
 ]
 if settings.DEBUG:

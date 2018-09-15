@@ -4,19 +4,32 @@ import shutil
 
 from django.conf import settings
 from django.shortcuts import render, redirect
+from django.views.generic.base import TemplateView
 
 from home.forms import DeleteDataHistoryForm, DocumentForm
 from home.models import Balance, ClientData, Document, Transactions
-from utils import  get_matched_balances, get_matched_transactions, populate_table
+from utils import  delete_file, get_matched_balances, get_matched_transactions, populate_table
+
+TRANSACTION = 'transaction'
+BALANCE = 'balance'
+FILE_TYPE = {TRANSACTION: 'T', BALANCE: 'B'}
 
 
-def index(request):
-    documents = Document.objects.all()
-    return render(request, 'home/home.html', { 'documents': documents })
+class IndexView(TemplateView):
+    template_name = "home/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        context['documents'] = Document.objects.all()
+        return context
 
 
-def analyze(request):
-    return render(request, 'home/analyze.html')
+class FeatureView(TemplateView):
+    template_name = "home/features.html"
+
+
+class AnalyzeView(TemplateView):
+    template_name = "home/analyze.html"
 
 
 def report(request, report_id):
@@ -50,14 +63,26 @@ def report(request, report_id):
 
 
 def model_form_upload(request):
+    error = {}
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             file_name = Document.objects.all().order_by('-uploaded_at').first().document.name
             file_type = form.cleaned_data['file_type']
+            if (TRANSACTION in file_name.lower() and FILE_TYPE.get(TRANSACTION) != file_type) or (BALANCE in file_name.lower() and FILE_TYPE.get(BALANCE) != file_type):
+                error = {'msg': 'Looks like you selected a wrong file type. Please verify that the file type is correct.'}
+                delete_file(file_name)
+                return render(request, 'home/file_upload.html', {'form': form, 'error': error})
+            form.save()
             file_path = '{media}/{file_name}'.format(media=settings.MEDIA_ROOT, file_name=file_name)
-            populate_table(request, file_path, file_type)
+            try:
+                populate_table(request, file_path, file_type)
+            except ValueError:
+                error = {'msg': 'Looks like you selected a wrong file type. Please verify that the file type is correct.'}
+                delete_file(file_name)
+                return render(request, 'home/file_upload.html', {'form': form, 'error': error})
+
             return redirect('index')
     else:
         form = DocumentForm()
