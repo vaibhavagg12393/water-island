@@ -1,18 +1,20 @@
 {% extends 'home/base.html' %}
 {% load i18n %}
 {% block content %}
-  <div class="container">
-    <h1>{% trans 'Topics' %}</h1>
-    <div class="col-md-5">
-      <ul class="list-group">
-        <a href="/report/1"><li class="list-group-item">{% trans 'Match the transaction for each institution by institution' %}</li></a>
-        <a href="/report/2"><li class="list-group-item">{% trans 'Match the transaction for each institution by currency' %}</li></a>
-        <a href="/report/3"><li class="list-group-item">{% trans 'Match the balances' %}</li></a>
-      </ul>
-    </div>
+<div class="container">
+  <h1>{% trans 'Topics' %}</h1>
+  <div class="col-md-5">
+    <ul class="list-group">
+      <a href="/report/1">
+        <li class="list-group-item">{% trans 'Match the transaction for each institution by institution' %}</li>
+      </a>
+      <a href="/report/2">
+        <li class="list-group-item">{% trans 'Match the transaction for each institution by currency' %}</li>
+      </a>
+      <a href="/report/3">
+        <li class="list-group-item">{% trans 'Match the balances' %}</li>
+      </a>
+    </ul>
   </div>
+</div>
 {% endblock %}
-
-
-
-

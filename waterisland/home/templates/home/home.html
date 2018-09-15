@@ -1,25 +1,27 @@
 {% extends "home/base.html" %}
 {% load i18n %}
-{%  block head %}
+{% block head %}
 {% endblock %}
 {% block content %}
-  <div class="container">
-    <div class="starter-template">
-      <h1>{% trans 'Water Island Capital' %} <a href="https://github.com/vaibhavagg12393/water-island" target="_blank">{% trans '(Github)' %}</a></h1>
-      <p class="lead">{% trans 'This project automates a Transaction Reconciliation Process ("TRP")' %}</p>
-    </div>
+<div class="container">
+  <div class="starter-template">
+    <h1>{% trans 'Water Island Capital' %} 
+      <a href="https://github.com/vaibhavagg12393/water-island" target="_blank">{% trans '(Github)' %}</a>
+    </h1>
+    <p class="lead">{% trans 'This project automates a Transaction Reconciliation Process ("TRP")' %}</p>
   </div>
-  {% if documents %}
-    <div class='div-padding'>
-    <h4>Uploaded files:</h4>
-    <ul>
-      {% for obj in documents %}
-        <li>
-          <a href="{{ obj.document.url }}">{{ obj.document.name }}</a>
-          <small>(Uploaded at: {{ obj.uploaded_at }})</small>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
+</div>
+{% if documents %}
+<div class='div-padding'>
+  <h4>Uploaded files:</h4>
+  <ul>
+    {% for obj in documents %}
+    <li>
+      <a href="{{ obj.document.url }}">{{ obj.document.name }}</a>
+      <small>(Uploaded at: {{ obj.uploaded_at }})</small>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
 {% endblock %}
