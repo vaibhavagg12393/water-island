@@ -6,6 +6,13 @@
       <option c-name="SS" value="SS">{% trans 'SS' %}</option>
     </select>
   </div>
+  <div class="col col-md-3">
+      <select id="select_filter" class="form-control">
+        <option c-name="select_filter" value="inavlid" selected="selected">{% trans 'Select Filter' %}</option>
+        <option c-name="match" value="match">{% trans 'Matched Results' %}</option>
+        <option c-name="unmatch" value="unmatch">{% trans 'Unmatched Results' %}</option>
+      </select>
+    </div>
 </div>
 <p></p>
 <div id="GSTable">
@@ -20,20 +27,33 @@
           <th class="sort" data-sort="currency">Currency</th>
           <th class="sort" data-sort="date">Settle Date</th>
           <th class="sort" data-sort="amount">Amount</th>
+          <th class="sort" data-sort="comment">Comment</th>
         </tr>
       </thead>
       <tbody class="list">
         {% for row in GS %}
         {% if row.match %}
-        <tr class="bg-success">
+        <tr class="bg-success" id="success">
         {% elif not row.match %}
-        <tr class="bg-danger">
+        <tr class="bg-danger" id="failure">
         {% endif %}
           <td class="institution">{{ row.institution }}</td>
           <td class="fund">{{ row.fund }}</td>
           <td class="currency">{{ row.currency }}</td>
           <td class="date">{{ row.settle_date }}</td>
           <td class="amount">{{ row.amount }}</td>
+          <td class="comment">
+            {% if row.comment %}
+              {{ row.comment }}
+            {% else %}
+              <form action="" method="post" class="comment-form">
+                <input type="hidden" name="id" value="{{ row.id }}">
+                <input type="hidden" name="reportid" value="{{ report_id }}">
+                <input type="text" name="commenttext">
+                <input type="submit" value="Save">
+              </form>
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -52,20 +72,33 @@
           <th class="sort" data-sort="currency">Currency</th>
           <th class="sort" data-sort="date">Settle Date</th>
           <th class="sort" data-sort="amount">Amount</th>
+          <th class="sort" data-sort="comment">Comment</th>
         </tr>
       </thead>
       <tbody class="list">
         {% for row in SS %}
         {% if row.match %}
-        <tr class="bg-success">
+        <tr class="bg-success" id="success">
         {% elif not row.match %}
-        <tr class="bg-danger">
+        <tr class="bg-danger" id="failure">
         {% endif %}
           <td class="institution">{{ row.institution }}</td>
           <td class="fund">{{ row.fund }}</td>
           <td class="currency">{{ row.currency }}</td>
           <td class="date">{{ row.settle_date }}</td>
           <td class="amount">{{ row.amount }}</td>
+          <td class="comment">
+            {% if row.comment %}
+              {{ row.comment }}
+            {% else %}
+              <form action="" method="post" class="comment-form">
+                <input type="hidden" name="id" value="{{ row.id }}">
+                <input type="hidden" name="reportid" value="{{ report_id }}">
+                <input type="text" name="commenttext">
+                <input type="submit" value="Save">
+              </form>
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -74,7 +107,7 @@
 </div>
 <script type="text/javascript">
   var options = {
-    valueNames: ['institution', 'fund', 'date', 'amount', 'currency']
+    valueNames: ['institution', 'fund', 'date', 'amount', 'currency', 'comment']
   };
   var GSList = new List('GSTable', options);
   var SSList = new List('SSTable', options);
@@ -91,6 +124,44 @@
       $('#SS').show();
       $('#GS').hide();
     }
+  });
+
+  $("#select_filter").change(function () {
+    var selected_option = $('option:selected', this);
+    var cluster_name = selected_option.attr('c-name');
+    if (cluster_name == 'match') {
+      $('.bg-success').show();
+      $('.bg-danger').hide();
+    }
+    else if (cluster_name == 'unmatch') {
+      $('.bg-success').hide();
+      $('.bg-danger').show();
+    }
+    else {
+      $('.bg-success').show();
+      $('.bg-danger').show();
+    }
+  });
+
+  $(".comment-form").each(function(e) {
+    var self = this;
+    $(this).submit(function(event) {
+      var values = {};
+      $.each($(this).serializeArray(), function(i, field) {
+          values[field.name] = field.value;
+      });
+      $.ajax({
+        url: "/parse_data/",
+        type:'POST',
+        data: values,
+        dataType: 'json',
+        success: function (comment_data) {
+          console.log(comment_data);
+          self.replaceWith(comment_data.comment);
+        }
+      });
+      event.preventDefault();
+    });
   });
 
 </script>

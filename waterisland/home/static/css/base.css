@@ -133,3 +133,10 @@ input:focus {
   border-radius: 2em;
   color:#FFF;
 }
+
+table td {
+	text-overflow: ellipsis;
+	max-width: 120px;
+	white-space: nowrap;
+	overflow: hidden;
+}

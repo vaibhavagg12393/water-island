@@ -3,11 +3,13 @@
 import shutil
 
 from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
+from django.views.decorators.csrf import csrf_exempt
 
 from home.forms import DeleteDataHistoryForm, DocumentForm
-from home.models import Balance, ClientData, Document, Transactions
+from home.models import Balance, ClientData, CommentsData, Document, Transactions
 from utils import  delete_file, get_matched_balances, get_matched_transactions, populate_table
 
 TRANSACTION = 'transaction'
@@ -31,7 +33,7 @@ class FeatureView(TemplateView):
 class AnalyzeView(TemplateView):
     template_name = "home/analyze.html"
 
-
+@csrf_exempt
 def report(request, report_id):
     report_id = int(report_id)
     result = {'report_id': report_id}
@@ -43,21 +45,21 @@ def report(request, report_id):
             for institution in unique_institutions:
                 required_fund = Transactions.objects.filter(fund=fund, account=institution)
                 required_institution = ClientData.objects.filter(fund=fund, institution=institution)
-                rows = get_matched_transactions(required_fund, required_institution)
+                rows = get_matched_transactions(required_fund, required_institution, report_id)
                 result[institution] = rows
     elif report_id == 2:
         for fund in unique_funds:
             for institution in unique_institutions:
                 required_fund = Transactions.objects.filter(fund=fund, account=institution)
                 required_institution = ClientData.objects.filter(fund=fund, institution=institution)
-                rows = get_matched_transactions(required_fund, required_institution)
+                rows = get_matched_transactions(required_fund, required_institution, report_id)
                 result[institution] = rows
     elif report_id == 3:
         for fund in unique_funds:
             for institution in unique_institutions:
                 required_fund = Balance.objects.filter(fund=fund, institution=institution)
                 required_institution = ClientData.objects.filter(fund=fund, institution=institution)
-                rows = get_matched_balances(required_fund, required_institution)
+                rows = get_matched_balances(required_fund, required_institution, report_id)
                 result[institution] = rows
     return render(request, 'home/report.html', result)
 
@@ -108,3 +110,11 @@ def delete(request):
     else:
         form = DeleteDataHistoryForm()
     return render(request, 'home/delete.html', {'form': form})
+
+@csrf_exempt
+def parse_data(request):
+    client_id = request.POST.get('id')
+    report_id = request.POST.get('reportid')
+    comment_text = request.POST.get('commenttext')
+    comment, created = CommentsData.objects.update_or_create(client_id=client_id, comment=comment_text, report_id=report_id)
+    return JsonResponse(comment.to_dict())

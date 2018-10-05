@@ -4,7 +4,7 @@ from datetime import datetime
 from django.conf import settings
 from pyexcel_xls import get_data
 
-from home.models import Balance, ClientData, Document, Transactions
+from home.models import Balance, CommentsData, ClientData, Document, Transactions
 
 TRADAR = 'Tradar'
 LG = 'LG'
@@ -118,25 +118,41 @@ def populate_table(request, file_path, file_type):
             raise ValueError
 
 
-def get_matched_transactions(required_funds, required_institutions):
+def get_matched_transactions(required_funds, required_institutions, report_id):
     result = []
     if not required_funds or not required_institutions:
         return result
     for institution in required_institutions:
+        try:
+            comment_obj = CommentsData.objects.get(report_id=report_id, client_id=institution.id)
+        except:
+            comment_obj = None
+        institution.comment = comment_obj.comment if comment_obj else None
+        match_found = False
         for fund in required_funds:
             if institution.settle_date == fund.settles and institution.amount == fund.cash_flow:
                 institution.match = True
                 institution.save()
                 result.append(institution)
+                match_found = True
+        if not match_found:
+            institution.match = False
+            institution.save()
+            result.append(institution)
     
     return result
 
 
-def get_matched_balances(required_funds, required_institutions):
+def get_matched_balances(required_funds, required_institutions, report_id):
     result = []
     if not required_funds or not required_institutions:
         return result
     for institution in required_institutions:
+        try:
+            comment_obj = CommentsData.objects.get(report_id=report_id, client_id=institution.id)
+        except:
+            comment_obj = None
+        institution.comment = comment_obj.comment if comment_obj else None
         match_found = False
         for fund in required_funds:
             if institution.currency == fund.ccy and institution.amount == fund.balance:

@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^delete/$', views.delete, name='delete'),
     url(r'^analyze/$', views.AnalyzeView.as_view(), name='analyze'),
     url(r'^report/(?P<report_id>\d+)',views.report, name='report'),
+    url(r'^parse_data/', views.parse_data, name='parse_data')
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

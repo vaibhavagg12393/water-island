@@ -78,3 +78,21 @@ class ClientData(models.Model):
     currency = models.CharField(max_length=255)
     settle_date = models.DateField(auto_now_add=True)
     details = models.CharField(max_length=255)
+
+
+class CommentsData(models.Model):
+
+    class Meta:
+        db_table = 'comments_data'
+        unique_together = ['report_id', 'client_id']
+
+    comment = models.TextField(blank=False, default='')
+    report_id = models.IntegerField(blank=False)
+    client_id = models.IntegerField(blank=False)
+
+    def to_dict(self):
+        return {
+            'comment': self.comment,
+            'report_id': self.report_id,
+            'client_id': self.client_id
+        }
